@@ -6,6 +6,7 @@ import Lists from './Lists';
 import List from './List';
 import Form from './Form';
 import ListsContextProvider, { ListsContext } from '../context/ListsContextProvider';
+import ItemsContextProvider, { ItemsContext } from '../context/ItemsContextProvider';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,15 +30,21 @@ const App = () => (
     <AppWrapper>
       <Header />
       <ListsContextProvider>
-        <ListsContext.Consumer>
-          {({ lists }) => (
-            <Switch>
-              <Route exact path="/" render={props => lists && <Lists lists={lists} {...props} />} />
-              <Route path='/list/:id/new' component={Form} />
-              <Route path='/list/:id' component={List} />
-            </Switch>
-          )}
-        </ListsContext.Consumer>
+        <ItemsContextProvider>
+          <ListsContext.Consumer>
+            {({ lists }) => (
+              <ItemsContext.Consumer>
+                {({ items }) => (
+                <Switch>
+                  <Route exact path="/" render={props => lists && <Lists lists={lists} {...props} />} />
+                  <Route path='/list/:id/new' component={Form} />
+                  <Route path='/list/:id' render={props => lists && <List lists={lists} listItems={items} {...props} />} />
+                </Switch>
+                )}
+              </ItemsContext.Consumer>
+            )}
+          </ListsContext.Consumer>
+        </ItemsContextProvider>
       </ListsContextProvider>
     </AppWrapper>
   </>
